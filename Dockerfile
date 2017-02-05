@@ -35,10 +35,9 @@ RUN pip install jinja2 pycrypto
 
 # We will need a KEK public key for the normal build, which produces a ROM.
 # This is copying a pre-generated key.
-#  mkdir -p kek
-#  openssl genrsa -F4 -out kek/kek.key 4096
-#  openssl rsa -in kek/kek.key -pubout > kek/kek.pub
-COPY kek /opt/spl-automate/kek
+RUN mkdir /opt/spl-automate/kek
+RUN openssl genrsa -F4 -out /opt/spl-automate/kek/kek.key 4096
+RUN openssl rsa -in /opt/spl-automate/kek/kek.key -pubout > /opt/spl-automate/kek/kek.pub
 
 # Create a DTB certificate store to be included in the embedded U-Boot images.
 ENV ROM_STORE=/opt/spl-automate/content/rom-store.dtb
@@ -75,10 +74,13 @@ RUN (cd /opt/spl-automate/u-boot; $AMAKE O=$RECOVERY EXT_DTB=$ROM_STORE)
 
 # We now need a subordinate key that will be signed by the KEK.
 # This is copying a pre-generated key.
+RUN mkdir -p /opt/spl-automate/subordinate
+RUN openssl genrsa -F4 -out /opt/spl-automate/subordinate/subordinate.key 4096
+RUN openssl rsa -in /opt/spl-automate/subordinate/subordinate.key -pubout > /opt/spl-automate/subordinate/subordinate.pub
 #  mkdir -p subordinate
 #  openssl genrsa -F4 -out subordinate/subordinate.key 4096
 #  openssl rsa -in subordinate/subordinate.key -pubout > subordinate/subordinate.pub
-COPY subordinate /opt/spl-automate/subordinate
+# COPY subordinate /opt/spl-automate/subordinate
 
 # Bring in a customized DTS describing the Normal U-Boot as a target.
 COPY u-boot.dts /opt/spl-automate/u-boot.dts
@@ -142,7 +144,9 @@ RUN cp /opt/spl-automate/content/flash1 /opt/spl-automate/content/flash1.missing
 RUN dd if=/opt/spl-automate/content/firmware.missing-subordinate of=/opt/spl-automate/content/flash1.missing-subordinate bs=1k conv=notrunc
 
 # We stage some "fake" or invalid keys also named "subordinate".
-COPY fake /opt/spl-automate/fake
+RUN mkdir -p /opt/spl-automate/fake/subordinate
+RUN openssl genrsa -F4 -out /opt/spl-automate/fake/subordinate/subordinate.key 4096
+RUN openssl rsa -in /opt/spl-automate/fake/subordinate/subordinate.key -pubout > /opt/spl-automate/fake/subordinate/subordinate.pub
 
 # Create a fake or invalid intermediate store.
 RUN /opt/spl-automate/fit-certificate-store/fit-cs.py \

@@ -114,8 +114,8 @@ if __name__ == '__main__':
     QEMU = os.environ['QEMU']
 
     test_missing_flash1()
-    test_corrupted_fit()
     test_corrupted_uboot()
+    test_corrupted_fit()
     test_fake_subordinate()
     test_fake_signature()
     test_success_state()
