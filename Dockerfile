@@ -183,6 +183,5 @@ RUN pip install pexpect
 RUN apt-get install -f bsdmainutils
 
 # Copy in a debug helper and the test harness.
-COPY debug.sh /opt/spl-automate/debug.sh
 COPY tests.py /opt/spl-automate/tests.py
 RUN /opt/spl-automate/tests.py
