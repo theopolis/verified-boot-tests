@@ -13,11 +13,19 @@ RUN apt-get update && apt-get install -y \
 RUN mkdir /opt/spl-automate
 RUN mkdir /opt/spl-automate/content
 
-RUN git clone -b ast2500-edk-mods https://github.com/theopolis/qemu /opt/spl-automate/qemu
-RUN git clone -b openbmc/helium/v2016.07 https://github.com/theopolis/u-boot /opt/spl-automate/u-boot
+ENV QEMU_BRANCH=aspeed-mods
+ENV UBOOT_BRANCH=openbmc/helium/v2016.07
+RUN git clone -b $QEMU_BRANCH https://github.com/theopolis/qemu /opt/spl-automate/qemu
+RUN git clone -b $UBOOT_BRANCH https://github.com/theopolis/u-boot /opt/spl-automate/u-boot
 
 # These are QEMU-specific dependencies and required tools.
-RUN apt-get install -y pkg-config zlib1g-dev libglib2.0-dev libfdt-dev autoconf libtool
+RUN apt-get update && apt-get install -y \
+    pkg-config \
+    zlib1g-dev \
+    libglib2.0-dev \
+    libfdt-dev \
+    autoconf \
+    libtool
 
 # Initialize additional development dependencies for QEMU.
 RUN (cd /opt/spl-automate/qemu; git submodule update --init pixman)
@@ -26,12 +34,16 @@ RUN (cd /opt/spl-automate/qemu; make -j 4)
 ENV QEMU=/opt/spl-automate/qemu/arm-softmmu/qemu-system-arm
 
 # Install dependencies for building U-Boot for ARM.
-RUN apt-get install -y gcc-arm-none-eabi libssl-dev device-tree-compiler bc
+RUN apt-get update && apt-get install -y \
+    gcc-arm-none-eabi \
+    libssl-dev \
+    device-tree-compiler \
+    bc \
+    python-pip
 
 # Install the FIT certificate store generator and its Python dependencies.
-RUN apt-get install -y python-pip
 RUN git clone https://github.com/theopolis/fit-certificate-store /opt/spl-automate/fit-certificate-store
-RUN pip install jinja2 pycrypto
+RUN pip install -U pip && pip install jinja2 pycrypto
 
 # We will need a KEK public key for the normal build, which produces a ROM.
 # This is copying a pre-generated key.
@@ -180,7 +192,7 @@ RUN dd if=/opt/spl-automate/content/firmware.fake-signature of=/opt/spl-automate
 RUN pip install pexpect
 
 # Need several additional debugging utils.
-RUN apt-get install -f bsdmainutils
+RUN apt-get update && apt-get install -y -f bsdmainutils
 
 # Copy in a debug helper and the test harness.
 COPY tests.py /opt/spl-automate/tests.py
