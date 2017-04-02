@@ -100,7 +100,7 @@ RUN $NORMAL/tools/mkimage \
 # Construct the firmware image (the RO and RW are symmetrical).
 RUN dd if=/dev/zero of=/opt/spl-automate/content/flash0 bs=1k count=32768
 RUN dd if=$RECOVERY/spl/u-boot-spl.bin of=/opt/spl-automate/content/flash0 conv=notrunc
-RUN dd if=$RECOVERY/u-boot.bin of=/opt/spl-automate/content/flash0 bs=1k seek=64 conv=notrunc
+RUN dd if=$RECOVERY/u-boot.bin of=/opt/spl-automate/content/flash0 bs=1k seek=84 conv=notrunc
 RUN dd if=$NORMAL/u-boot.img of=/opt/spl-automate/content/flash0 bs=1k seek=512 conv=notrunc
 RUN cp /opt/spl-automate/content/flash0 /opt/spl-automate/content/flash1
 
