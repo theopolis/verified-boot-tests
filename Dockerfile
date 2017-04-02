@@ -57,12 +57,6 @@ RUN /opt/spl-automate/fit-certificate-store/fit-cs.py \
   --template /opt/spl-automate/fit-certificate-store/store.dts.in \
   --required-node image /opt/spl-automate/kek $ROM_STORE
 
-# Small patch to build U-Boot for verified-boot outside of Poky and for QEMU.
-COPY qemu-rom.patch /opt/spl-automate/qemu-rom.patch
-
-# Enable features for FBTP to build (1) in QEMU and (2) an SPL ROM.
-RUN (cd /opt/spl-automate/u-boot; git apply ../qemu-rom.patch)
-
 # Define a "Normal" U-Boot build, to be executed after verification by the ROM.
 ENV NORMAL=/opt/spl-automate/u-boot/build-normal
 RUN mkdir -p $NORMAL
