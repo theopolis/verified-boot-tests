@@ -1,0 +1,14 @@
+diff --git a/config.mk b/config.mk
+index b77d589..22909c2 100644
+--- a/config.mk
++++ b/config.mk
+@@ -13,7 +13,7 @@
+ #  That's the reason why this file must be included from spl/Makefile too.
+ #  If we did not have Tegra SoCs, build system would be much simpler...)
+ PLATFORM_RELFLAGS :=
+-PLATFORM_CPPFLAGS :=
++PLATFORM_CPPFLAGS := -DDEBUG -DCONFIG_DEBUG_QEMU -DCONFIG_QEMU_DEBUG
+ PLATFORM_LDFLAGS :=
+ LDFLAGS :=
+ LDFLAGS_FINAL :=
+
